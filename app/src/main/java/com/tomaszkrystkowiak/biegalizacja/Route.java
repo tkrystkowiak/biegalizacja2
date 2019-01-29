@@ -15,13 +15,13 @@ public class Route {
     @PrimaryKey
     public int rid;
 
-    @ColumnInfo(name = "locations")
+    /*@ColumnInfo(name = "locations")
     public ArrayList<LatLng> locations;
 
     @ColumnInfo(name = "locations")
     public float distance;
 
     @ColumnInfo(name = "date")
-    public Date date;
+    public Date date;*/
 
 }
