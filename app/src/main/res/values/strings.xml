@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Biegalizacja</string>
+    <string name="button_start">start</string>
+    <string name="button_stop">stop</string>
+    <string name="button_pause">pause</string>
+    <string name="button_resume">resume</string>
+    <string name="button_reset">reset</string>
+    <string name="button_start_training">start training</string>
+    <string name="button_routes">show routes</string>
+    <string name="button_route_show">show route</string>
+    <string name="button_route_safe">safe route</string>
+    <string name="time_deafult">00:00</string>
+    <string name="distance_deafult">0m</string>
+    <string name="distance_result_deafult">Distance: </string>
+    <string name="average_speed_deafult">Average speed: </string>
+    <string name="calories_deafult">Calories: </string>
+    <string name="title_activity_map">Map</string>
+    <string name="title_activity_test_maps">Map</string>
+
+</resources>
