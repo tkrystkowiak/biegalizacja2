@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 
@@ -58,12 +59,18 @@ public class SummaryActivity extends Activity {
         return routeToSave;
     }
 
+    private void showThatSaved(){
+        Toast.makeText(this, "Route successfully saved", Toast.LENGTH_LONG).show();
+    }
+
     private class SaveRouteButtonClick implements View.OnClickListener{
 
         @Override
         public void onClick(View v) {
             DbRouteSavingAsyncTask dbRouteSavingAsyncTask = new DbRouteSavingAsyncTask();
             dbRouteSavingAsyncTask.execute();
+            showThatSaved();
+
         }
     }
 
