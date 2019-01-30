@@ -30,6 +30,7 @@ public class SummaryActivity extends Activity {
         caloriesView = findViewById(R.id.calories_view);
         showRouteButton = findViewById(R.id.show_route_button);
         saveRouteButton = findViewById(R.id.save_route_button);
+        saveRouteButton.setOnClickListener(new SaveRouteButtonClick());
         AppDatabase db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "routes").build();
         fillTextFields();
@@ -48,21 +49,21 @@ public class SummaryActivity extends Activity {
         averageSpeedView.setText("Average speed: "+ Math.round(avgSpeed*100f)/100f +"km/h");
     }
 
-    /*private Route prepareRouteToSave(){
+    private Route prepareRouteToSave(){
         Route routeToSave = new Route();
         routeToSave.locations = getIntent().getParcelableArrayListExtra("route");
         routeToSave.distance = getIntent().getFloatExtra("distance",0f);
         routeToSave.date = (Date) getIntent().getSerializableExtra("date");
         return routeToSave;
-    }*/
+    }
 
-    /*private class SaveRouteButtonClick implements View.OnClickListener{
+    private class SaveRouteButtonClick implements View.OnClickListener{
 
         @Override
         public void onClick(View v) {
             db.routeDao().insert(prepareRouteToSave());
         }
-    }*/
+    }
 
 }
 
