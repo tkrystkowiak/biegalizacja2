@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 public class Route {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public int rid;
 
     @ColumnInfo(name = "locations")
