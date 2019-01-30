@@ -16,5 +16,7 @@
     <string name="calories_deafult">Calories: </string>
     <string name="title_activity_map">Map</string>
     <string name="title_activity_test_maps">Map</string>
+    <string name="mainimage_logo">App Logo</string>
+    <string name="main_welcometext">Ready for today?</string>
 
 </resources>
