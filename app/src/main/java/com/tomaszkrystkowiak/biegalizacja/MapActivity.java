@@ -83,10 +83,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        getLocationPermission();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        getLocationPermission();
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mLocationCallback = new LocationCallback() {
             @Override
@@ -116,8 +116,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap = googleMap;
 
         PolylineOptions polylineOptions = new PolylineOptions();
-        polylineOptions.color(Color.CYAN);
-        polylineOptions.width(10);
+        polylineOptions.color(Color.BLACK);
+        polylineOptions.width(20);
         route = mMap.addPolyline(polylineOptions);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
@@ -148,7 +148,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
@@ -166,7 +165,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
                             Log.d(TAG, "Location found. Showing current location");
                             mLastKnownLocation = (Location) task.getResult();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -175,7 +173,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(52.408333,16.934167), 15));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(52.408333,16.934167), 17));
                             mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
@@ -225,7 +223,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
     private void startSummaryActivity(){
-        ArrayList<LatLng> routePoints = new ArrayList<>();
+        ArrayList<LatLng> routePoints = (ArrayList<LatLng>) route.getPoints();
         Intent intent = new Intent(this, SummaryActivity.class);
         intent.putExtra("distance",distance);
         intent.putExtra("route", routePoints);

@@ -8,7 +8,7 @@
     <string name="button_start_training">start training</string>
     <string name="button_routes">show routes</string>
     <string name="button_route_show">show route</string>
-    <string name="button_route_safe">safe route</string>
+    <string name="button_route_safe">save route</string>
     <string name="time_deafult">00:00</string>
     <string name="distance_deafult">0m</string>
     <string name="distance_result_deafult">Distance: </string>
@@ -18,5 +18,6 @@
     <string name="title_activity_test_maps">Map</string>
     <string name="mainimage_logo">App Logo</string>
     <string name="main_welcometext">Ready for today?</string>
+    <string name="title_activity_route_preview">Map</string>
 
 </resources>

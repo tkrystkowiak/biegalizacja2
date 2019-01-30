@@ -2,6 +2,7 @@ package com.tomaszkrystkowiak.biegalizacja;
 
 import android.app.Activity;
 import android.arch.persistence.room.Room;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +32,7 @@ public class SummaryActivity extends Activity {
         averageSpeedView = findViewById(R.id.average_speed_view);
         caloriesView = findViewById(R.id.calories_view);
         showRouteButton = findViewById(R.id.show_route_button);
+        showRouteButton.setOnClickListener(new ShowRouteButtonClick());
         saveRouteButton = findViewById(R.id.save_route_button);
         saveRouteButton.setOnClickListener(new SaveRouteButtonClick());
         db = Room.databaseBuilder(getApplicationContext(),
@@ -63,6 +65,12 @@ public class SummaryActivity extends Activity {
         Toast.makeText(this, "Route successfully saved", Toast.LENGTH_LONG).show();
     }
 
+    private void startRoutePreviewActivity(){
+        Intent intent = new Intent(this, RoutePreviewActivity.class);
+        intent.putExtra("route",getIntent().getParcelableArrayListExtra("route"));
+        startActivity(intent);
+    }
+
     private class SaveRouteButtonClick implements View.OnClickListener{
 
         @Override
@@ -73,6 +81,16 @@ public class SummaryActivity extends Activity {
 
         }
     }
+
+    private class ShowRouteButtonClick implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            startRoutePreviewActivity();
+        }
+    }
+
+
 
     private class DbRouteSavingAsyncTask extends AsyncTask<Void, Void, Route> {
 
