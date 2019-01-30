@@ -230,6 +230,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         intent.putExtra("distance",distance);
         intent.putExtra("route", routePoints);
         intent.putExtra("time",totalTime);
+        Log.i(TAG, "startSummaryActivity: the date is"+startDate);
         intent.putExtra("startDate", startDate);
         startActivity(intent);
     }

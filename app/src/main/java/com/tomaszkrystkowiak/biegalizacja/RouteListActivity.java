@@ -3,7 +3,6 @@ package com.tomaszkrystkowiak.biegalizacja;
 import android.app.Activity;
 import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -21,6 +20,8 @@ public class RouteListActivity extends Activity {
         routeListView = findViewById(R.id.route_list);
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "routes").build();
+        DbRoutesAsyncTask dbRoutesAsyncTask = new DbRoutesAsyncTask();
+        dbRoutesAsyncTask.execute();
 
     }
 
@@ -30,21 +31,31 @@ public class RouteListActivity extends Activity {
         return sample;
     }
 
-    private class DbFavTwittsAsyncTask extends AsyncTask<Void , Void, Route> {
+    private class DbRoutesAsyncTask extends AsyncTask<Void , Void, Route> {
 
 
         @Override
         protected  Route doInBackground(Void...voids) {
 
             List<Route> routeList = db.routeDao().getAll();
-            Route sample = routeList.get(0);
-            return sample;
+            if(routeList.isEmpty()){
+                return null;
+            }
+            else {
+                Route sample = routeList.get(0);
+                return sample;
+            }
         }
 
         @Override
         protected void onPostExecute(Route route) {
-            routeListView.setText("Distance: "+route.distance+", Date: "+ route.date);
+            if(route != null) {
+                routeListView.setText("Distance: "+route.distance+", Date: "+ route.date);
+            }else{
+                routeListView.setText("No available routes");
             }
+
+        }
 
     }
 

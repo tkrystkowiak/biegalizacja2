@@ -2,6 +2,7 @@ package com.tomaszkrystkowiak.biegalizacja;
 
 import android.app.Activity;
 import android.arch.persistence.room.Room;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -31,7 +32,7 @@ public class SummaryActivity extends Activity {
         showRouteButton = findViewById(R.id.show_route_button);
         saveRouteButton = findViewById(R.id.save_route_button);
         saveRouteButton.setOnClickListener(new SaveRouteButtonClick());
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+        db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "routes").build();
         fillTextFields();
     }
@@ -53,7 +54,7 @@ public class SummaryActivity extends Activity {
         Route routeToSave = new Route();
         routeToSave.locations = getIntent().getParcelableArrayListExtra("route");
         routeToSave.distance = getIntent().getFloatExtra("distance",0f);
-        routeToSave.date = (Date) getIntent().getSerializableExtra("date");
+        routeToSave.date = (Date) getIntent().getSerializableExtra("startDate");
         return routeToSave;
     }
 
@@ -61,8 +62,23 @@ public class SummaryActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            db.routeDao().insert(prepareRouteToSave());
+            DbRouteSavingAsyncTask dbRouteSavingAsyncTask = new DbRouteSavingAsyncTask();
+            dbRouteSavingAsyncTask.execute();
         }
+    }
+
+    private class DbRouteSavingAsyncTask extends AsyncTask<Void, Void, Route> {
+
+
+        @Override
+        protected Route doInBackground(Void...voids) {
+
+            Route toSave = prepareRouteToSave();
+            db.routeDao().insert(toSave);
+            return toSave;
+
+        }
+
     }
 
 }
