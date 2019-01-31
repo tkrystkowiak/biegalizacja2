@@ -7,16 +7,18 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class RouteListActivity extends Activity {
@@ -47,7 +49,9 @@ public class RouteListActivity extends Activity {
         TextView routeView = new TextView(this);
         routeView.setId(i);
         routeView.setTextSize(TypedValue.COMPLEX_UNIT_SP,18f);
+        routeView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT,1f));
         Button showButton = new Button(this);
+        showButton.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.MATCH_PARENT));
         showButton.setId(i);
         final Route routeToPass = route;
         if(route.locations.isEmpty()){
@@ -63,7 +67,7 @@ public class RouteListActivity extends Activity {
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startRoutePreviewActivity((ArrayList<LatLng>)routeToPass.locations);
+                startRoutePreviewActivity(routeToPass.locations);
             }
         });
         subLayout.addView(routeView);
@@ -75,6 +79,10 @@ public class RouteListActivity extends Activity {
         Intent intent = new Intent(this, RoutePreviewActivity.class);
         intent.putExtra("route",routePoints);
         startActivity(intent);
+    }
+
+    private void showThatNoRoutes(){
+        Toast.makeText(this, "No available routes", Toast.LENGTH_LONG).show();
     }
 
 
@@ -102,7 +110,7 @@ public class RouteListActivity extends Activity {
 
                 }
             }else{
-                routeListView.setText("No available routes");
+                showThatNoRoutes();
             }
 
         }
