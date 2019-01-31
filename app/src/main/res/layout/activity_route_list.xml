@@ -6,10 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".RouteListActivity">
 
-    <TextView
-        android:id="@+id/route_list"
-        android:layout_width="315dp"
-        android:layout_height="469dp"
-        tools:layout_editor_absoluteX="35dp"
-        tools:layout_editor_absoluteY="21dp" />
+    <LinearLayout
+        android:id="@+id/routes_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"></LinearLayout>
 </android.support.constraint.ConstraintLayout>

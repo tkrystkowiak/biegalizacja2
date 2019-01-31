@@ -55,6 +55,9 @@ public class SummaryActivity extends Activity {
 
     private Route prepareRouteToSave(){
         Route routeToSave = new Route();
+        if(getIntent().getParcelableArrayListExtra("route").isEmpty()){
+            Log.i(TAG, "prepareRouteToSave: Route points to save are empty");
+        }
         routeToSave.locations = getIntent().getParcelableArrayListExtra("route");
         routeToSave.distance = getIntent().getFloatExtra("distance",0f);
         routeToSave.date = (Date) getIntent().getSerializableExtra("startDate");
