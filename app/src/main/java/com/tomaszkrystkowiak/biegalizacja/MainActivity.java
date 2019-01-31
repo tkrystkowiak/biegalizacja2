@@ -3,6 +3,8 @@ package com.tomaszkrystkowiak.biegalizacja;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -11,6 +13,15 @@ public class MainActivity extends Activity {
     private Button mapButton;
     private Button routesButton;
     private Button calcBmiButton;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.extrasmenu, menu);
+        return true;
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +48,11 @@ public class MainActivity extends Activity {
 
     private void startCalcBmiActivity() {
         Intent intent = new Intent(this, CalcBmiActivity.class);
+        startActivity(intent);
+    }
+
+    public void launchSettings(MenuItem item) {
+        Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
