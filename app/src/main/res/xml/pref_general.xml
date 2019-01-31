@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
         android:defaultValue="true"
@@ -10,7 +11,7 @@
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
         android:capitalize="words"
-        android:defaultValue="@string/pref_default_display_name"
+        android:defaultValue="false"
         android:inputType="textCapWords"
         android:key="example_text"
         android:maxLines="1"
