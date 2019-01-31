@@ -19,5 +19,11 @@
     <string name="mainimage_logo">App Logo</string>
     <string name="main_welcometext">Ready for today?</string>
     <string name="title_activity_route_preview">Map</string>
+    <string name="button_bmi">CALCULTE YOUR BMI</string>
+    <string name="bmi_height">Your height (cm)</string>
+    <string name="bmi_default_height">172</string>
+    <string name="bmi_weight">Your weight (kg)</string>
+    <string name="bmi_default_weight">64</string>
+    <string name="button_inside_bmi">CALCULATE MY BMI</string>
 
 </resources>

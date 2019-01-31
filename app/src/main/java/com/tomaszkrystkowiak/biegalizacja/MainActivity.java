@@ -10,6 +10,7 @@ public class MainActivity extends Activity {
 
     private Button mapButton;
     private Button routesButton;
+    private Button calcBmiButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +20,8 @@ public class MainActivity extends Activity {
         mapButton.setOnClickListener(new MapButtonClick());
         routesButton = findViewById(R.id.routes_button);
         routesButton.setOnClickListener(new RoutesButtonClick());
-
+        calcBmiButton = findViewById(R.id.calc_bmi_button);
+        calcBmiButton.setOnClickListener(new CalcBmiButtonClick());
 
     }
 
@@ -31,6 +33,10 @@ public class MainActivity extends Activity {
     private void startRouteListActivity(){
         Intent intent = new Intent(this, RouteListActivity.class);
         startActivity(intent);
+    }
+
+    private void startCalcBmiActivity() {
+        Intent intent = new Intent(this, CalcBmiActivity.class);
     }
 
 
@@ -47,6 +53,14 @@ public class MainActivity extends Activity {
         @Override
         public void onClick(View v) {
             startRouteListActivity();
+        }
+    }
+
+    private class CalcBmiButtonClick implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            startCalcBmiActivity();
         }
     }
 }
