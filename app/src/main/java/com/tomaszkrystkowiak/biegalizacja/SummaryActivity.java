@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class SummaryActivity extends Activity {
@@ -59,6 +60,7 @@ public class SummaryActivity extends Activity {
             Log.i(TAG, "prepareRouteToSave: Route points to save are empty");
         }
         routeToSave.locations = getIntent().getParcelableArrayListExtra("route");
+        routeToSave.timestamps = getIntent().getStringArrayListExtra("timestamps");
         routeToSave.distance = getIntent().getFloatExtra("distance",0f);
         routeToSave.date = (Date) getIntent().getSerializableExtra("startDate");
         return routeToSave;

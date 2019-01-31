@@ -18,6 +18,9 @@ public class Route {
     @ColumnInfo(name = "locations")
     public ArrayList<LatLng> locations;
 
+    @ColumnInfo(name = "timestamps")
+    public ArrayList<String> timestamps;
+
     @ColumnInfo(name = "distance")
     public float distance;
 

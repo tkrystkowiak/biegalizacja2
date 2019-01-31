@@ -34,7 +34,7 @@ public class RouteListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_list);
         routesLayout = findViewById(R.id.routes_layout);
-        routesLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.JAPANESE_INDIGO));
+        routesLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.SPACE_CADET));
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "routes").build();
         DbRoutesAsyncTask dbRoutesAsyncTask = new DbRoutesAsyncTask();
@@ -52,27 +52,28 @@ public class RouteListActivity extends Activity {
         subLayout.setLayoutParams(sublayoutParams);
         subLayout.setBackground(ContextCompat.getDrawable(this,R.drawable.rounded_corner));
         subLayout.setClipToOutline(true);
+        subLayout.setGravity(Gravity.CENTER_VERTICAL);
         TextView routeView = new TextView(this);
         routeView.setId(i);
         LinearLayout.LayoutParams routeViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT,1f);
-        routeViewParams.setMargins(30,10,10,10);
+        routeViewParams.setMargins(30,40,10,10);
         routeView.setTextSize(TypedValue.COMPLEX_UNIT_SP,22f);
         routeView.setLayoutParams(routeViewParams);
-        routeView.setClipToOutline(true);
+        routeView.setGravity(Gravity.CENTER_VERTICAL);
         Button showButton = new Button(this);
         Button raceButton = new Button(this);
-        showButton.setBackground(ContextCompat.getDrawable(this,R.drawable.rounded_button));
+        //showButton.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_directions_run_black_24dp));
         showButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_map_black_24dp,0,0);
         showButton.setGravity(Gravity.CENTER);
         showButton.setText("SHOW");
-        showButton.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.MATCH_PARENT));
+        showButton.setLayoutParams(new LinearLayout.LayoutParams(200,200));
 
 
-        raceButton.setBackground(ContextCompat.getDrawable(this,R.drawable.rounded_button));
-        raceButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_map_black_24dp,0,0);
+        //raceButton.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_map_black_24dp));
+        raceButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_directions_run_black_24dp,0,0);
         raceButton.setGravity(Gravity.CENTER);
         raceButton.setText("RACE");
-        raceButton.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.MATCH_PARENT));
+        raceButton.setLayoutParams(new LinearLayout.LayoutParams(200,200));
 
 
 
@@ -86,6 +87,12 @@ public class RouteListActivity extends Activity {
                 startRoutePreviewActivity(routeToPass.locations);
             }
         });
+        raceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startRaceActivity(routeToPass.locations,routeToPass.timestamps);
+            }
+        });
         subLayout.addView(routeView);
         subLayout.addView(showButton);
         subLayout.addView(raceButton);
@@ -95,6 +102,13 @@ public class RouteListActivity extends Activity {
     private void startRoutePreviewActivity(ArrayList<LatLng> routePoints){
         Intent intent = new Intent(this, RoutePreviewActivity.class);
         intent.putExtra("route",routePoints);
+        startActivity(intent);
+    }
+
+    private void startRaceActivity(ArrayList<LatLng> routePoints, ArrayList<String> timestamps){
+        Intent intent = new Intent(this, RaceActivity.class);
+        intent.putExtra("route",routePoints);
+        intent.putStringArrayListExtra("timestamps",timestamps);
         startActivity(intent);
     }
 

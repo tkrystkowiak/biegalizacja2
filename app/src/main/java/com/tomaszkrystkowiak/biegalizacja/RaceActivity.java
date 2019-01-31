@@ -27,6 +27,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,56 +35,50 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+public class RaceActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private static final String TAG = "MapActivity";
+    private static final String TAG = "RaceActivity";
     private final static int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-
-
     private GoogleMap mMap;
-    private Polyline route;
+    private Polyline ghostRoute;
+    private Polyline userRoute;
     private Location mLastKnownLocation;
-    private Location penultimateLocation;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationCallback mLocationCallback;
     private boolean mLocationPermissionGranted;
-    private boolean isMeasuring = false;
+    private TextView infoView;
+    private ArrayList<LatLng> routePointsList;
     private Button startButton;
-    private Button pauseButton;
-    private TextView timeView;
-    private TextView distanceView;
-    private float distance;
+    private boolean isStarted = false;
+    private int checkpointIndex = 0;
+    private ArrayList<Long> timestamps;
     private Handler timerHandler = new Handler();
-    private ArrayList<String> timestamps = new ArrayList<>();
     private long startTime;
-    private long pauseTime;
-    private long resumeTime;
-    private long pausedTime;
     private long totalTime;
-    private Date startDate;
+    private ArrayList<Location> checkpoints;
     private Runnable timerRunnable = new Runnable() {
 
         @Override
         public void run() {
-            totalTime = System.currentTimeMillis() - (startTime + pausedTime);
+            totalTime = System.currentTimeMillis() - startTime;
             int seconds = (int) (totalTime / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
-
-            timeView.setText(String.format("%02d:%02d", minutes, seconds));
-
             timerHandler.postDelayed(this, 500);
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate: starting creation");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_race);
+        routePointsList = getIntent().getParcelableArrayListExtra("route");
+        checkpoints = new ArrayList<Location>();
+        timestamps = new ArrayList<Long>();
+        Log.i(TAG, "onCreate: first etap of creation finished");
+        convertTimestamps();
+        createCheckpoints();
         getLocationPermission();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -99,34 +94,50 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 for (Location location : locationResult.getLocations()) {
                     mLastKnownLocation = location;
                     Log.i(TAG, mLastKnownLocation.toString());
-                    updateRoute();
-                    updateDistance();
+                    if(isStarted){
+                        isCheckpointChecked();
+                        updateRoute();
+                    }
+                    else {
+                        if (isNearStart()) {
+                            startButton.setEnabled(true);
+                        } else {
+                            startButton.setEnabled(false);
+                        }
+                    }
                 }
             }
         };
-        startButton = findViewById(R.id.startstop_button);
+        infoView = findViewById(R.id.info_view);
+        infoView.setText("Go to the start point");
+        startButton = findViewById(R.id.start_race_button);
         startButton.setOnClickListener(new StartButtonClick());
-        pauseButton = findViewById(R.id.pause_button);
-        pauseButton.setOnClickListener(new PauseButtonClick());
-        timeView = findViewById(R.id.time_view);
-        distanceView = findViewById(R.id.distance_view);
+        startButton.setEnabled(false);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        PolylineOptions polylineOptions = new PolylineOptions();
-        polylineOptions.color(Color.BLACK);
-        polylineOptions.width(20);
-        route = mMap.addPolyline(polylineOptions);
+        PolylineOptions polylineOptionsGhost = new PolylineOptions();
+        polylineOptionsGhost.color(Color.BLACK);
+        polylineOptionsGhost.width(20);
+        ghostRoute = mMap.addPolyline(polylineOptionsGhost);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-            return;
-        }
-        Log.d(TAG, "Permissions granted proceeding.");
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        PolylineOptions polylineOptionsUser = new PolylineOptions();
+        polylineOptionsUser.color(Color.BLUE);
+        polylineOptionsUser.width(20);
+        userRoute = mMap.addPolyline(polylineOptionsUser);
+
+
+        ghostRoute.setPoints(routePointsList);
+        Log.i(TAG, "onMapReady: isEmpty"+ routePointsList.isEmpty());
+        LatLng start = routePointsList.get(0);
+        LatLng finish = routePointsList.get(routePointsList.size()-1);
+        mMap.addMarker(new MarkerOptions().position(start).title("Start"));
+        mMap.addMarker(new MarkerOptions().position(finish).title("Finish"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(start.latitude, start.longitude), 17));
         getDeviceLocation();
     }
 
@@ -140,6 +151,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
+    }
+
+    private boolean isNearStart(){
+        Location start = new Location("");
+        start.setLatitude(routePointsList.get(0).latitude);
+        start.setLongitude(routePointsList.get(0).longitude);
+        if(start.distanceTo(mLastKnownLocation)<=10){
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -171,18 +192,38 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), 17));
-                        } else {
-                            Log.d(TAG, "Current location is null. Using defaults.");
-                            Log.e(TAG, "Exception: %s", task.getException());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(52.408333,16.934167), 17));
-                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                        }
+                        } 
                     }
                 });
             }
         } catch(SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
         }
+    }
+
+    private void createCheckpoints(){
+        for(int i = 0;i<routePointsList.size(); i=i+3){
+            Location checkpoint = new Location("");
+            checkpoint.setLatitude(routePointsList.get(i).latitude);
+            checkpoint.setLongitude(routePointsList.get(i).longitude);
+            checkpoints.add(checkpoint);
+        }
+        Location finish = new Location("");
+        finish.setLatitude(routePointsList.get(routePointsList.size()-1).latitude);
+        finish.setLongitude(routePointsList.get(routePointsList.size()-1).longitude);
+        checkpoints.add(finish);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startLocationUpdates();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
     }
 
     private void stopLocationUpdates() {
@@ -207,78 +248,50 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 null);
     }
 
-    private void updateRoute() {
-        List<LatLng> points = route.getPoints();
-        points.add(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()));
-        route.setPoints(points);
-        String timeInPoint = String.valueOf(totalTime);
-        timestamps.add(timeInPoint);
-
-    }
-
-    private void updateDistance() {
-        if(penultimateLocation != null){
-            float addedDistance = penultimateLocation.distanceTo(mLastKnownLocation);
-            distance =distance + addedDistance;
-            Log.i(TAG, "Distance: "+distance);
-            distanceView.setText(Math.round(distance)+"m");
+    private void isCheckpointChecked(){
+        if(checkpointIndex == checkpoints.size() - 1){
+            long result = totalTime - timestamps.get(checkpointIndex);
+            startRaceResultActivity(result);
         }
-        penultimateLocation = mLastKnownLocation;
+        else {
+            if (checkpoints.get(checkpointIndex).distanceTo(mLastKnownLocation) <= 5) {
+                long deltaTime = totalTime - timestamps.get(checkpointIndex);
+                infoView.setText(deltaTime / 1000 + " s");
+                checkpointIndex++;
+            }
+        }
     }
 
-    private void startSummaryActivity(){
-        ArrayList<LatLng> routePoints = (ArrayList<LatLng>) route.getPoints();
-        Intent intent = new Intent(this, SummaryActivity.class);
-        intent.putExtra("distance",distance);
-        intent.putExtra("route", routePoints);
-        intent.putStringArrayListExtra("timestamps", timestamps);
-        intent.putExtra("time",totalTime);
-        Log.i(TAG, "startSummaryActivity: the date is"+startDate);
-        intent.putExtra("startDate", startDate);
-        startActivity(intent);
+    private void convertTimestamps(){
+
+        ArrayList<String> stringTimestamps = getIntent().getStringArrayListExtra("timestamps");
+        Log.i(TAG, "convertTimestamps: this works");
+        for (int i = 0;i<stringTimestamps.size();i=i+3) {
+            timestamps.add(Long.valueOf(stringTimestamps.get(i)));
+            Log.i(TAG, "convertTimestamps: timespam added nr"+i);
+        }
+        timestamps.add(Long.valueOf(stringTimestamps.get(stringTimestamps.size()-1)));
+    }
+
+    private void startRaceResultActivity(long result){
+        Intent intent = new Intent(this, RaceResultActivity.class);
+        intent.putExtra("result",result);
+    }
+
+    private void updateRoute() {
+        List<LatLng> points = userRoute.getPoints();
+        points.add(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()));
+        userRoute.setPoints(points);
     }
 
     private class StartButtonClick implements View.OnClickListener{
 
         @Override
         public void onClick(View v) {
-            if(startButton.getText().equals("start")) {
-                Calendar calendar = Calendar.getInstance();
-                startDate = calendar.getTime();
-                isMeasuring = true;
-                startLocationUpdates();
-                startTime = System.currentTimeMillis();
-                timerHandler.postDelayed(timerRunnable, 0);
-                startButton.setText(R.string.button_stop);
-            }
-            else{
-                isMeasuring = false;
-                stopLocationUpdates();
-                timerHandler.removeCallbacks(timerRunnable);
-                startButton.setText(R.string.button_start);
-                startSummaryActivity();
-            }
+            isStarted = true;
+            startTime = System.currentTimeMillis();
+            timerHandler.postDelayed(timerRunnable, 0);
+            startButton.setEnabled(false);
         }
     }
-
-    private class PauseButtonClick implements View.OnClickListener{
-
-        @Override
-        public void onClick(View v) {
-            if(pauseButton.getText().equals("pause")) {
-                pauseTime = System.currentTimeMillis();
-                stopLocationUpdates();
-                timerHandler.removeCallbacks(timerRunnable);
-                pauseButton.setText(R.string.button_resume);
-            }
-            else{
-                resumeTime = System.currentTimeMillis();
-                pausedTime = pausedTime + resumeTime - pauseTime;
-                startLocationUpdates();
-                timerHandler.postDelayed(timerRunnable, 0);
-                pauseButton.setText(R.string.button_pause);
-            }
-        }
-    }
-
 }

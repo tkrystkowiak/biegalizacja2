@@ -99,5 +99,6 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="setting_main">SETTINGS</string>
+    <string name="title_activity_race">Map</string>
 
 </resources>
