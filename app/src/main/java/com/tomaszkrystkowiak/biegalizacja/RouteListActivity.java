@@ -3,6 +3,8 @@ package com.tomaszkrystkowiak.biegalizacja;
 import android.app.Activity;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,9 +13,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
+import 	android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -24,7 +26,6 @@ import java.util.List;
 public class RouteListActivity extends Activity {
 
     private static final String TAG = "RouteListActivity";
-    private TextView routeListView;
     private LinearLayout routesLayout;
     private AppDatabase db;
 
@@ -33,6 +34,7 @@ public class RouteListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_list);
         routesLayout = findViewById(R.id.routes_layout);
+        routesLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.JAPANESE_INDIGO));
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "routes").build();
         DbRoutesAsyncTask dbRoutesAsyncTask = new DbRoutesAsyncTask();
@@ -45,25 +47,39 @@ public class RouteListActivity extends Activity {
         subLayout.setId(i);
         subLayout.setWeightSum(1);
         subLayout.setOrientation(LinearLayout.HORIZONTAL);
-        subLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams sublayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        sublayoutParams.setMargins(10,10,10,10);
+        subLayout.setLayoutParams(sublayoutParams);
+        subLayout.setBackground(ContextCompat.getDrawable(this,R.drawable.rounded_corner));
+        subLayout.setClipToOutline(true);
         TextView routeView = new TextView(this);
         routeView.setId(i);
-        routeView.setTextSize(TypedValue.COMPLEX_UNIT_SP,18f);
-        routeView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT,1f));
+        LinearLayout.LayoutParams routeViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT,1f);
+        routeViewParams.setMargins(30,10,10,10);
+        routeView.setTextSize(TypedValue.COMPLEX_UNIT_SP,22f);
+        routeView.setLayoutParams(routeViewParams);
+        routeView.setClipToOutline(true);
         Button showButton = new Button(this);
+        Button raceButton = new Button(this);
+        showButton.setBackground(ContextCompat.getDrawable(this,R.drawable.rounded_button));
+        showButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_map_black_24dp,0,0);
+        showButton.setGravity(Gravity.CENTER);
+        showButton.setText("SHOW");
         showButton.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.MATCH_PARENT));
-        showButton.setId(i);
-        final Route routeToPass = route;
-        if(route.locations.isEmpty()){
-            Log.i(TAG, "drawRoutes: original point list is empty ");
-        }
-        if(routeToPass.locations.isEmpty()){
-            Log.i(TAG, "drawRoutes: point list is empty ");
-        }
 
-        routeView.append("Distance: " + route.distance + "\n");
+
+        raceButton.setBackground(ContextCompat.getDrawable(this,R.drawable.rounded_button));
+        raceButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_map_black_24dp,0,0);
+        raceButton.setGravity(Gravity.CENTER);
+        raceButton.setText("RACE");
+        raceButton.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.MATCH_PARENT));
+
+
+
+        final Route routeToPass = route;
+
+        routeView.append("Distance: " + Math.round(route.distance) +"m"+ "\n");
         routeView.append("Date: " + DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(route.date) + "\n");
-        showButton.setText("Show");
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,6 +88,7 @@ public class RouteListActivity extends Activity {
         });
         subLayout.addView(routeView);
         subLayout.addView(showButton);
+        subLayout.addView(raceButton);
         routesLayout.addView(subLayout);
     }
 

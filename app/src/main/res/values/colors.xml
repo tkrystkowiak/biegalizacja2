@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="CARIBBEAN_GREEN">#02c39a</color>
+    <color name="SPACE_CADET">#1d3557</color>
+    <color name="HONEYDEW">#F1FAEE</color>
+    <color name="HANSA_YELLOW">#E9C46A</color>
+    <color name="JAPANESE_INDIGO">#264653</color>
+    <color name="JUNGLE_GREEN">#2A9D8F</color>
 </resources>
