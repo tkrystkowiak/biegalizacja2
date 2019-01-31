@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 public class CalcBmiActivity extends Activity {
 
     private EditText height_placeholder;
@@ -29,9 +31,9 @@ public class CalcBmiActivity extends Activity {
             float heightValue = Float.parseFloat(firstV);
             float weightValue = Float.parseFloat(secondV);
 
-            float bmi_result = weightValue / ((heightValue)/100 * heightValue);
-
-
+            float bmi = weightValue / ((heightValue)/100 * heightValue/100);
+            
+            bmi_result.setText(new DecimalFormat("##.##").format(bmi));
         }
     }
 

@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
 
     private void startCalcBmiActivity() {
         Intent intent = new Intent(this, CalcBmiActivity.class);
+        startActivity(intent);
     }
 
 
