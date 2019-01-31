@@ -99,6 +99,9 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="setting_main">SETTINGS</string>
-    <string name="title_activity_race">Map</string>
+    <string name="settings_name">YOUR NAME:</string>
+    <string name="settings_height">YOUR HEIGHT:</string>
+    <string name="settings_weight">YOUR WEIGHT:</string>
+    <string name="settings_save_button">SAVE DATA</string>
 
 </resources>

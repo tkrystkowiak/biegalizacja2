@@ -192,7 +192,7 @@ public class RaceActivity extends FragmentActivity implements OnMapReadyCallback
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), 17));
-                        } 
+                        }
                     }
                 });
             }
