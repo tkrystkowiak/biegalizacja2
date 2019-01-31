@@ -52,6 +52,10 @@ public class SummaryActivity extends Activity {
         Log.i(TAG, "Average speed: "+avgSpeed);
         distanceResultView.setText("Distance: "+ distance+"m");
         averageSpeedView.setText("Average speed: "+ Math.round(avgSpeed*100f)/100f +"km/h");
+
+        float calorie = 85 * distanceKm;
+        Log.i(TAG, "Calorie: "+calorie);
+        caloriesView.setText("Calorie: "+Math.round(calorie*100f)/100f+" kcal");
     }
 
     private Route prepareRouteToSave(){

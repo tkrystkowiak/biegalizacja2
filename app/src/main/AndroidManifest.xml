@@ -53,6 +53,7 @@
         <activity android:name=".SummaryActivity" />
         <activity android:name=".RouteListActivity" />
         <activity android:name=".CalcBmiActivity" />
+        <activity android:name=".AppSettings"/>
         <activity
             android:name=".RoutePreviewActivity"
             android:label="@string/title_activity_route_preview" />

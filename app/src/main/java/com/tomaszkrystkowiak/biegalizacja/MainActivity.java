@@ -14,6 +14,8 @@ public class MainActivity extends Activity {
     private Button routesButton;
     private Button calcBmiButton;
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -52,7 +54,7 @@ public class MainActivity extends Activity {
     }
 
     public void launchSettings(MenuItem item) {
-        Intent intent = new Intent(this, SettingsActivity.class);
+        Intent intent = new Intent(this, AppSettings.class);
         startActivity(intent);
     }
 
